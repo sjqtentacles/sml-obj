@@ -1,0 +1,16 @@
+(* Test executable basis: the library (with vendored sml-glm) plus harness/runner. *)
+
+$(SML_LIB)/basis/basis.mlb
+
+../src/mesh.mlb
+
+harness.sml
+fixtures.sml
+support.sml
+test_obj.sml
+test_mtl.sml
+test_ply.sml
+test_buffers.sml
+test_edge.sml
+entry.sml
+main.sml
