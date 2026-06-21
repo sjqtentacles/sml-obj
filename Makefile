@@ -17,9 +17,16 @@ GLMDIR     := lib/github.com/sjqtentacles/sml-glm
 TEST_MLB   := test/test.mlb
 SRCS       := $(wildcard $(GLMDIR)/* src/* test/*.sml) $(TEST_MLB)
 
-.PHONY: all test poly test-poly all-tests fixtures clean
+.PHONY: all test poly test-poly all-tests fixtures example clean
 
 all: $(BIN)/test-mlton
+
+example: $(BIN)/wireframe
+	mkdir -p assets
+	./$(BIN)/wireframe
+
+$(BIN)/wireframe: $(SRCS) examples/wireframe.sml examples/sources.mlb | $(BIN)
+	$(MLTON) -output $@ examples/sources.mlb
 
 $(BIN)/test-mlton: $(SRCS) | $(BIN)
 	$(MLTON) -output $@ $(TEST_MLB)
