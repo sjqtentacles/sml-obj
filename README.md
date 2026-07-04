@@ -67,7 +67,11 @@ val triCount    : mesh -> int
 
 Faces are fan-triangulated and indices normalized to 0-based on parse. Malformed
 input (out-of-range index, face with fewer than 3 vertices, non-numeric data,
-missing PLY header) raises `Mesh msg`.
+missing PLY header) raises `Mesh msg`. Integer fields (indices, PLY counts) are
+parsed via `IntInf` and bounded to the fixed 32-bit range
+`[-2147483648, 2147483647]`, so an oversized numeric field raises `Mesh`
+identically on MLton (32-bit `int`) and Poly/ML (63-bit `int`) instead of
+raising `Overflow` on MLton — a real asset never has 2^31 vertices.
 
 ## Example
 
@@ -94,8 +98,9 @@ readable) plus a **binary little-endian PLY** packed with Python's `struct`
 an independent encoder. Tests assert vertex/triangle counts and coordinates,
 that ASCII and binary PLY yield identical meshes, that the flattened
 position/index buffers reconstruct the triangles, and that edge cases (negative
-indices, quad triangulation, CRLF, missing normals, out-of-range indices, empty
-meshes, large coordinates) behave correctly.
+indices, quad triangulation, CRLF, missing normals, out-of-range indices,
+oversized (>2^31) indices rejected identically on both compilers, empty meshes,
+large coordinates) behave correctly.
 
 ## License
 

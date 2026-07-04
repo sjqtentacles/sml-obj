@@ -43,9 +43,18 @@ struct
       SOME r => r
     | NONE => raise Mesh ("expected a real number, got: " ^ s)
 
+  (* Parse via IntInf and bound to the fixed 32-bit range so the result is
+     identical on MLton (default 32-bit int) and Poly/ML (63-bit int): an
+     integer field outside [~2^31, 2^31-1] raises `Mesh` rather than raising
+     Overflow on MLton / silently accepting a huge value on Poly/ML. Mesh
+     indices and counts always fit `int` on every target -- a real asset never
+     has 2^31 vertices. *)
   fun parseInt s =
-    case Int.fromString s of
-      SOME n => n
+    case IntInf.fromString s of
+      SOME n =>
+        if n >= ~2147483648 andalso n <= 2147483647
+        then IntInf.toInt n
+        else raise Mesh ("expected an integer, got: " ^ s)
     | NONE => raise Mesh ("expected an integer, got: " ^ s)
 
   (* ---------- OBJ ---------- *)
