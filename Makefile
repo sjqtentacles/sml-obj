@@ -17,7 +17,7 @@ GLMDIR     := lib/github.com/sjqtentacles/sml-glm
 TEST_MLB   := test/test.mlb
 SRCS       := $(wildcard $(GLMDIR)/* src/* test/*.sml) $(TEST_MLB)
 
-.PHONY: all test poly test-poly all-tests fixtures example clean
+.PHONY: all test poly test-poly verify-identical all-tests fixtures example clean
 
 all: $(BIN)/test-mlton
 
@@ -39,7 +39,7 @@ test: $(BIN)/test-mlton
 poly test-poly:
 	printf 'use "$(GLMDIR)/glm.sig";\nuse "$(GLMDIR)/glm.sml";\nuse "src/mesh.sig";\nuse "src/mesh.sml";\nuse "test/harness.sml";\nuse "test/fixtures.sml";\nuse "test/support.sml";\nuse "test/test_obj.sml";\nuse "test/test_mtl.sml";\nuse "test/test_ply.sml";\nuse "test/test_buffers.sml";\nuse "test/test_edge.sml";\nuse "test/entry.sml";\nuse "test/main.sml";\n' | $(POLY) -q --error-exit
 
-all-tests: test test-poly
+all-tests: test test-poly verify-identical
 
 fixtures:
 	python3 bin/gen_fixtures.py
@@ -49,3 +49,11 @@ $(BIN):
 
 clean:
 	rm -f $(BIN)/test-mlton
+
+# The dual-compiler contract: both suites must print byte-identical output.
+# Recursive make -s captures the raw suite stdout regardless of poly strategy.
+verify-identical:
+	$(MAKE) -s test > $(BIN)/out-mlton.txt
+	$(MAKE) -s test-poly > $(BIN)/out-poly.txt
+	diff $(BIN)/out-mlton.txt $(BIN)/out-poly.txt
+	@echo "byte-identical: OK"
