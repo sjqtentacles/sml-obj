@@ -17,7 +17,7 @@ GLMDIR     := lib/github.com/sjqtentacles/sml-glm
 TEST_MLB   := test/test.mlb
 SRCS       := $(wildcard $(GLMDIR)/* src/* test/*.sml) $(TEST_MLB)
 
-.PHONY: all test poly test-poly verify-identical all-tests fixtures example clean
+.PHONY: all test poly test-poly verify-identical all-tests fixtures example clean example-poly
 
 all: $(BIN)/test-mlton
 
@@ -40,6 +40,10 @@ poly test-poly:
 	printf 'use "$(GLMDIR)/glm.sig";\nuse "$(GLMDIR)/glm.sml";\nuse "src/mesh.sig";\nuse "src/mesh.sml";\nuse "test/harness.sml";\nuse "test/fixtures.sml";\nuse "test/support.sml";\nuse "test/test_obj.sml";\nuse "test/test_mtl.sml";\nuse "test/test_ply.sml";\nuse "test/test_buffers.sml";\nuse "test/test_edge.sml";\nuse "test/entry.sml";\nuse "test/main.sml";\n' | $(POLY) -q --error-exit
 
 all-tests: test test-poly verify-identical
+
+# Demos are top-level scripts; run them under Poly/ML via use-loading.
+example-poly:
+	sh tools/polybuild -r examples/sources.mlb
 
 fixtures:
 	python3 bin/gen_fixtures.py
