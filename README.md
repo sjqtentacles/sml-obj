@@ -1,5 +1,7 @@
 # sml-obj
 
+[![CI](https://github.com/sjqtentacles/sml-obj/actions/workflows/ci.yml/badge.svg)](https://github.com/sjqtentacles/sml-obj/actions/workflows/ci.yml)
+
 Pure-Standard-ML **mesh asset parsers** producing index buffers over
 [`sml-glm`](https://github.com/sjqtentacles/sml-glm) vectors:
 
